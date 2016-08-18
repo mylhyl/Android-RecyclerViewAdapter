@@ -15,10 +15,12 @@
 
 package com.mylhyl.rvadapter.touch;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -27,14 +29,29 @@ import android.widget.TextView;
 
 import com.mylhyl.rvadapter.CygRecyclerViewListener;
 
-public class CygRecyclerViewHolder extends RecyclerView.ViewHolder implements OnClickListener, OnLongClickListener {
+public final class CygRecyclerViewHolder extends RecyclerView.ViewHolder implements OnClickListener, OnLongClickListener {
+    private Context mContext;
+    private View mItemView;
     private CygRecyclerViewListener mListener;
     public View mSwipedOverlayView;// 滑动时显示的覆盖层
 
-    public CygRecyclerViewHolder(View itemView, CygRecyclerViewListener listener) {
+    private CygRecyclerViewHolder(Context context, View itemView, CygRecyclerViewListener listener) {
         super(itemView);
+        this.mContext = context;
+        this.mItemView = itemView;
         this.mListener = listener;
-        setListener(itemView);
+        if (mListener != null) {
+            mItemView.setOnClickListener(this);
+            mItemView.setOnLongClickListener(this);
+        }
+    }
+
+    public static CygRecyclerViewHolder get(Context context, ViewGroup parent, int layoutId
+            , CygRecyclerViewListener listener) {
+        View itemView = LayoutInflater.from(context).inflate(layoutId, parent,
+                false);
+        CygRecyclerViewHolder holder = new CygRecyclerViewHolder(context, itemView, listener);
+        return holder;
     }
 
     /**
@@ -110,11 +127,6 @@ public class CygRecyclerViewHolder extends RecyclerView.ViewHolder implements On
         }
         float alpha = (float) (.2 + .8 * Math.abs(dX) / itemView.getWidth());
         overlay.setAlpha(alpha);
-    }
-
-    private void setListener(View itemView) {
-        itemView.setOnClickListener(this);
-        itemView.setOnLongClickListener(this);
     }
 
     public CygRecyclerViewHolder setText(int viewId, String text) {

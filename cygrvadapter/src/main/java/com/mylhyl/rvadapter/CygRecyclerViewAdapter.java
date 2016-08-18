@@ -15,9 +15,8 @@
 
 package com.mylhyl.rvadapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.mylhyl.rvadapter.touch.CygRecyclerViewHolder;
@@ -39,12 +38,14 @@ public abstract class CygRecyclerViewAdapter<T> extends RecyclerView.Adapter<Cyg
      */
     public abstract void onBindData(CygRecyclerViewHolder viewHolder, T item, int position);
 
-    private CygRecyclerViewListener mListener;
+    protected Context mContext;
+    protected CygRecyclerViewListener mListener;
     protected List<T> mObjects;
-    private int mResource;
+    protected int mResource;
 
 
-    public CygRecyclerViewAdapter(int resource, List<T> data) {
+    public CygRecyclerViewAdapter(Context context, int resource, List<T> data) {
+        this.mContext = context;
         this.mResource = resource;
         this.mObjects = data;
     }
@@ -62,14 +63,12 @@ public abstract class CygRecyclerViewAdapter<T> extends RecyclerView.Adapter<Cyg
 
     @Override
     public void onBindViewHolder(CygRecyclerViewHolder viewHolder, int position) {
-        if (mObjects != null)
-            onBindData(viewHolder, mObjects.get(position), position);
+        onBindData(viewHolder, mObjects.get(position), position);
     }
 
     @Override
     public CygRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(mResource, parent, false);
-        CygRecyclerViewHolder viewHolder = new CygRecyclerViewHolder(itemView, mListener);
+        CygRecyclerViewHolder viewHolder = CygRecyclerViewHolder.get(mContext, parent, mResource, mListener);
         return viewHolder;
     }
 

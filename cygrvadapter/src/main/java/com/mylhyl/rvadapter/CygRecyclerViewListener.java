@@ -21,7 +21,8 @@ public abstract class CygRecyclerViewListener {
 	public void onItemClickListener(View v, int position) {
 	}
 
-	public void onItemLongClickListener(View v, int position) {
+	public boolean onItemLongClickListener(View v, int position) {
+		return true;
 	}
 
 }
